@@ -123,8 +123,11 @@ function enterRoom(room, group) {
     <h1 style=${textColor}>${roomName}</h1>
     <p style=${textColor}>${rules}</p>
     <h1 style=${textColor}>${group}</h1>
-    <button id="completed">Task Complete</button>
-    `;
+    ${
+      roomName !== "GAME OVER!"
+        ? `<button id="completed">Task Complete</button>`
+        : `<button id="start-new-game">New Game</button>`
+    }`;
 }
 
 enterRoom(rooms.smoothie, "Smirthies");
