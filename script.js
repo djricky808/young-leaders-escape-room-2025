@@ -39,3 +39,5 @@ const rooms = {
 const newGameBtn = document.getElementById("start-new-game");
 const upButton = document.getElementById("up");
 const downButton = document.getElementById("down");
+const leftButton = document.getElementById("Left");
+const rightButton = document.getElementById("Right");
