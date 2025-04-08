@@ -1,25 +1,25 @@
 const rooms = {
   hotshot: {
     color: "red",
-    room: "Hotshot Room",
+    roomName: "Hotshot Room",
     rules:
       "Chosen players need to knock down a row of bottles from across the room.",
   },
   balance: {
     color: "yellow",
-    room: "Balance Room",
+    roomName: "Balance Room",
     rules:
       "Chosen players must balance 3 balls on a plate while walking in a straight line.",
   },
   smoothie: {
     color: "blue",
-    room: "Smoothie Room",
+    roomName: "Smoothie Room",
     rules:
       "Chosen players will drink an unconventionally flavored smoothie, what could it be…?",
   },
   memory: {
     color: "green",
-    room: "Energy Room",
+    roomName: "Energy Room",
     rules: "Players will match Pokemon Energy Cards, Memory style",
   },
   "dead-end": {
@@ -45,10 +45,26 @@ const rooms = {
 const newGameBtn = document.getElementById("start-new-game");
 const upButton = document.getElementById("up");
 const downButton = document.getElementById("down");
-const leftButton = document.getElementById("Left");
-const rightButton = document.getElementById("Right");
+const leftButton = document.getElementById("left");
+const rightButton = document.getElementById("right");
+const completedButton = document.getElementById("completed");
 
 //Room Screens-Selectors
 const introductionScreen = document.getElementById("intro");
 const selectDirectionScreen = document.getElementById("direction");
 const roomScreen = document.getElementById("room");
+
+function enterRoom(room, group) {
+  console.log("Entering room", room);
+  let { color, roomName, rules } = room;
+  let textColor = color === "yellow" ? "color:black" : "color:white";
+  roomScreen.style.backgroundColor = color;
+  roomScreen.innerHTML = `
+    <h1 style=${textColor}>${roomName}</h1>
+    <p style=${textColor}>${rules}</p>
+    <h1 style=${textColor}>${group}</h1>
+    <button id="completed">Task Complete</button>
+    `;
+}
+
+enterRoom(rooms.smoothie, "Smirthies");
