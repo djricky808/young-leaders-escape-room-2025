@@ -34,10 +34,21 @@ const rooms = {
     rules:
       "Oh no! You entered this dead end room again! I am afraid that this is the end of the road for you!",
   },
+  victory: {
+    color: "White",
+    room: "CONGRATULATIONS",
+    rules: "You escaped with a time of...",
+  },
 };
 
+//Buttons
 const newGameBtn = document.getElementById("start-new-game");
 const upButton = document.getElementById("up");
 const downButton = document.getElementById("down");
 const leftButton = document.getElementById("Left");
 const rightButton = document.getElementById("Right");
+
+//Room Screens-Selectors
+const introductionScreen = document.getElementById("intro");
+const selectDirectionScreen = document.getElementById("direction");
+const roomScreen = document.getElementById("room");
