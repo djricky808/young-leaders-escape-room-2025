@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Virtual Escape Room</title>
+  </head>
+  <body>
+    <div class="slide-container" id="intro">
+      <h1>Welcome to the Escape Room</h1>
+      <button id="start-new-game">New Game</button>
+    </div>
+    <div class="slide-container hidden" id="direction">
+      <h1>Where do you want to go?</h1>
+      <button id="up">Up</button>
+      <button id="down">Down</button>
+      <button id="left">Left</button>
+      <button id="right">Right</button>
+    </div>
+    <div class="slide-container hidden" id="room"></div>
+    <h1 class="timer" id="timer"></h1>
+  </body>
+  <script href="script.js"></script>
+</html>
