@@ -53,7 +53,6 @@ const upButton = document.getElementById("up");
 const downButton = document.getElementById("down");
 const leftButton = document.getElementById("left");
 const rightButton = document.getElementById("right");
-const completedButton = document.getElementById("completed");
 
 //Room Screens-Selectors
 const introductionScreen = document.getElementById("intro");
@@ -61,7 +60,7 @@ const selectDirectionScreen = document.getElementById("direction");
 const roomScreen = document.getElementById("room");
 
 //Timer Functions
-let timer = 10000; //1800000;
+let timer = 310000; //1800000;
 let timeElapsed = 0;
 let timerRunning = false;
 let intervalID = null;
@@ -82,7 +81,6 @@ function startTimer() {
   intervalID = setInterval(() => {
     countdown();
     stopWatch();
-    console.log(timer, timeElapsed);
     if (timer <= 0) {
       stopTimer();
       enterRoom(rooms["out-of-time"], "Try Again");
@@ -129,6 +127,22 @@ function enterRoom(room, group) {
         ? `<button id="completed">Task Complete</button>`
         : `<button id="start-new-game">New Game</button>`
     }`;
+  roomScreen.classList.remove("hidden");
+  addCompletedButtonEventListener();
+}
+
+function goToRoomSelection() {
+  roomScreen.classList.add("hidden");
+  selectDirectionScreen.classList.remove("hidden");
 }
 
 enterRoom(rooms.smoothie, "Smirthies");
+
+//Button Event Listeners
+function addCompletedButtonEventListener() {
+  const completedButton = document.getElementById("completed");
+  completedButton.addEventListener("click", () => {
+    console.log("I got clicked");
+    goToRoomSelection();
+  });
+}
