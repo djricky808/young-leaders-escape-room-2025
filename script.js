@@ -28,11 +28,17 @@ const rooms = {
     rules:
       "Oh no! You reached a dead end, go back to where you came. <br> CAUTION! If you enter this exact room again, the game will be over!",
   },
-  "game-over": {
+  "reentered-dead-end": {
     color: "black",
     room: "GAME OVER!",
     rules:
       "Oh no! You entered this dead end room again! I am afraid that this is the end of the road for you!",
+  },
+  "out-of-time": {
+    color: "black",
+    room: "GAME OVER!",
+    rules:
+      "Oh no! You ran out of time! I am afraid that this is the end of the road for you!",
   },
   victory: {
     color: "White",
@@ -53,6 +59,51 @@ const completedButton = document.getElementById("completed");
 const introductionScreen = document.getElementById("intro");
 const selectDirectionScreen = document.getElementById("direction");
 const roomScreen = document.getElementById("room");
+
+//Timer Functions
+let timer = 1800000;
+let timeElapsed = 0;
+let timerRunning = false;
+
+function countdown(timer) {
+  return timer - 1000;
+}
+
+function stopWatch(timeElapsed) {
+  return timeElapsed + 1000;
+}
+
+function startTimer() {
+  timerRunning = true;
+  while (timerRunning) {
+    setTimeout(() => {
+      countdown(timer);
+      stopWatch(timeElapsed);
+      if (timer === 0) {
+        stopTimer();
+        enterRoom(rooms["out-of-time"], "Try Again");
+      }
+      updateTime();
+    }, 1000);
+  }
+}
+
+function stopTimer() {
+  timerRunning = false;
+}
+
+function resetTimer() {
+  timer = 180000;
+}
+
+function updateTime() {
+  let seconds = Math.floor(timer / 1000);
+  let minutes = Math.floor(seconds / 60);
+  timer.innerHTML = `
+    <h1>${minutes}:${seconds}</h1>`;
+}
+
+startTimer();
 
 function enterRoom(room, group) {
   console.log("Entering room", room);
