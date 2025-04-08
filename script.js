@@ -108,8 +108,9 @@ function updateTime() {
   let seconds = totalSeconds % 60;
   let formattedMinutes = String(minutes).padStart(2, "0");
   let formattedSeconds = String(seconds).padStart(2, "0");
+  let textColor = minutes < 5 ? "color:red" : "color:white";
   timerText.innerHTML = `
-    <h1>${formattedMinutes}:${formattedSeconds}</h1>`;
+    <h1 style=${textColor}>${formattedMinutes}:${formattedSeconds}</h1>`;
 }
 
 startTimer();
