@@ -34,8 +34,55 @@ body {
   color: white;
 }
 
+#direction {
+  background-color: gray;
+  position: relative;
+}
+
+#direction h1 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#up,
+#down,
+#left,
+#right {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 10%;
+}
+
+#up,
+#down {
+  left: 50%;
+}
+
+#left,
+#right {
+  top: 50%;
+}
+
+#up {
+  top: 10%;
+}
+
+#down {
+  top: 90%;
+}
+
+#left {
+  left: 10%;
+}
+
+#right {
+  left: 90%;
+}
+
 button {
-  width: 25%;
+  width: 20%;
   padding: 20px;
   border: 5px solid black;
   background-color: aliceblue;
@@ -45,4 +92,9 @@ button {
 button:hover {
   background-color: greenyellow;
   cursor: pointer;
+}
+
+button:disabled {
+  background-color: darkslategrey;
+  cursor: not-allowed;
 }
