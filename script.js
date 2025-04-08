@@ -1,3 +1,6 @@
+const spots = 20;
+const roomsTraveled = 0;
+
 const rooms = {
   hotshot: {
     color: "red",
@@ -22,19 +25,19 @@ const rooms = {
     roomName: "Energy Room",
     rules: "Players will match Pokemon Energy Cards, Memory style",
   },
-  "dead-end": {
+  deadEnd: {
     color: "black",
     roomName: "DEAD END!",
     rules:
       "Oh no! You reached a dead end, go back to where you came. <br> CAUTION! If you enter this exact room again, the game will be over!",
   },
-  "reentered-dead-end": {
+  reEnteredDeadEnd: {
     color: "black",
     roomName: "GAME OVER!",
     rules:
       "Oh no! You entered this dead end room again! I am afraid that this is the end of the road for you!",
   },
-  "out-of-time": {
+  outOfTime: {
     color: "black",
     roomName: "GAME OVER!",
     rules:
@@ -44,6 +47,29 @@ const rooms = {
     color: "White",
     roomName: "CONGRATULATIONS",
     rules: "You escaped with a time of...",
+  },
+};
+
+const teams = {
+  confidential: {
+    teamName: "It's Confidential",
+    spaces: spots / 5,
+  },
+  fryBreads: {
+    teamName: "FryBreads",
+    spaces: spots / 5,
+  },
+  smirthies: {
+    teamName: "smirthies",
+    spaces: spots / 5,
+  },
+  oneForAll: {
+    teamName: "One for All <br> (1 Person from Each Team)",
+    spaces: spots / 5,
+  },
+  allForOne: {
+    teamName: "All for One <br> (Everybody is Playing)",
+    spaces: spots / 5,
   },
 };
 
@@ -60,7 +86,7 @@ const selectDirectionScreen = document.getElementById("direction");
 const roomScreen = document.getElementById("room");
 
 //Timer Functions
-let timer = 310000; //1800000;
+let timer = 10000; //1800000;
 let timeElapsed = 0;
 let timerRunning = false;
 let intervalID = null;
@@ -83,7 +109,7 @@ function startTimer() {
     stopWatch();
     if (timer <= 0) {
       stopTimer();
-      enterRoom(rooms["out-of-time"], "Try Again");
+      enterRoom(rooms.outOfTime, "Try Again");
     }
     updateTime();
   }, 1000);
@@ -95,7 +121,7 @@ function stopTimer() {
 }
 
 function resetTimer() {
-  timer = 180000;
+  timer = 1800000;
   timeElapsed = 0;
   updateTime();
 }
@@ -113,6 +139,13 @@ function updateTime() {
 
 startTimer();
 
+function startNewGame() {
+  resetTimer();
+  startTimer();
+  introductionScreen.classList.add("hidden");
+  goToRoomSelection();
+}
+
 function enterRoom(room, group) {
   console.log("Entering room", room);
   let { color, roomName, rules } = room;
@@ -125,10 +158,13 @@ function enterRoom(room, group) {
     ${
       roomName !== "GAME OVER!"
         ? `<button id="completed">Task Complete</button>`
-        : `<button id="start-new-game">New Game</button>`
+        : `<button id="retry">New Game</button>`
     }`;
+  selectDirectionScreen.classList.add("hidden");
   roomScreen.classList.remove("hidden");
-  addCompletedButtonEventListener();
+  roomName !== "GAME OVER!"
+    ? addCompletedButtonEventListener()
+    : addRetryButtonEventListener();
 }
 
 function goToRoomSelection() {
@@ -136,7 +172,7 @@ function goToRoomSelection() {
   selectDirectionScreen.classList.remove("hidden");
 }
 
-enterRoom(rooms.smoothie, "Smirthies");
+enterRoom(rooms.memory, teams.oneForAll.teamName);
 
 //Button Event Listeners
 function addCompletedButtonEventListener() {
@@ -144,5 +180,13 @@ function addCompletedButtonEventListener() {
   completedButton.addEventListener("click", () => {
     console.log("I got clicked");
     goToRoomSelection();
+  });
+}
+
+function addRetryButtonEventListener() {
+  const retryButton = document.getElementById("retry");
+  retryButton.addEventListener("click", () => {
+    console.log("I got clicked");
+    startNewGame();
   });
 }
