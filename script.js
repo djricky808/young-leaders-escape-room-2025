@@ -213,8 +213,12 @@ function assignRemainingRooms() {
   }
 
   gameGrid.forEach((row) => {
-    for (const column of row) {
-      console.log(column.assignedRoom);
+    for (const room of row) {
+      if (!room.assignedRoom) {
+        console.log("Room is vacant");
+      } else {
+        console.log(room.assignedRoom);
+      }
     }
   });
 }
