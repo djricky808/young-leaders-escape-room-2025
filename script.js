@@ -143,6 +143,10 @@ function updateTime() {
 
 startTimer(); //TESTING
 
+function buildMap() {
+  buildGrid(rows, columns);
+}
+
 function startNewGame() {
   resetTimer();
   startTimer();
