@@ -5,35 +5,48 @@ const columns = 5;
 const squares = rows * columns;
 const spots = squares - 5;
 
+class AssignedRoom {
+  constructor() {
+    this.room = null;
+    this.assignedTeam = null;
+    this.hasRoomBeenEntered = false;
+  }
+}
+
 const rooms = {
   hotshot: {
     color: "red",
     roomName: "Hotshot Room",
     rules:
       "Chosen players need to knock down a row of bottles from across the room.",
+    count: spots / 5,
   },
   balance: {
     color: "yellow",
     roomName: "Balance Room",
     rules:
       "Chosen players must balance 3 balls on a plate while walking in a straight line.",
+    count: spots / 5,
   },
   smoothie: {
     color: "blue",
     roomName: "Smoothie Room",
     rules:
       "Chosen players will drink an unconventionally flavored smoothie, what could it be…?",
+    count: spots / 5,
   },
   memory: {
     color: "green",
     roomName: "Energy Room",
     rules: "Players will match Pokemon Energy Cards, Memory style",
+    count: spots / 5,
   },
   deadEnd: {
     color: "black",
     roomName: "DEAD END!",
     rules:
       "Oh no! You reached a dead end, go back to where you came. <br> CAUTION! If you enter this exact room again, the game will be over!",
+    count: spots / 5,
   },
   reEnteredDeadEnd: {
     color: "black",
@@ -47,10 +60,16 @@ const rooms = {
     rules:
       "Oh no! You ran out of time! I am afraid that this is the end of the road for you!",
   },
-  victory: {
+  finish: {
     color: "White",
     roomName: "CONGRATULATIONS",
     rules: "You escaped with a time of...",
+  },
+  start: {
+    color: "Gray",
+    roomName: "Starting Room",
+    rules:
+      "Welcome to the Escape Room <br> Choose the direction that you want to go <br> Complete the task indicated by the assigned group <br> Try to find the exit room before the timer runs out.",
   },
 };
 
@@ -152,10 +171,12 @@ function buildGrid(rows, columns) {
   for (let i = 0; i < rows; i++) {
     gameGrid.push([]);
     for (let j = 0; j < columns; j++) {
-      gameGrid[i].push([]);
+      gameGrid[i].push(new AssignedRoom());
     }
   }
 }
+
+function assignRooms() {}
 
 buildMap(); //TESTING;
 
@@ -198,7 +219,6 @@ enterRoom(rooms.memory, teams.oneForAll.teamName); //TESTING
 function addCompletedButtonEventListener() {
   const completedButton = document.getElementById("completed");
   completedButton.addEventListener("click", () => {
-    console.log("I got clicked");
     goToRoomSelection();
   });
 }
@@ -206,7 +226,6 @@ function addCompletedButtonEventListener() {
 function addRetryButtonEventListener() {
   const retryButton = document.getElementById("retry");
   retryButton.addEventListener("click", () => {
-    console.log("I got clicked");
     startNewGame();
   });
 }
