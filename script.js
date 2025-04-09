@@ -168,6 +168,7 @@ function buildMap() {
   buildGrid(rows, columns);
   assignStartRoom();
   assignFinishRoom();
+  assignRemainingRooms();
   console.log(gameGrid);
 }
 
@@ -203,7 +204,19 @@ function assignFinishRoom() {
 }
 
 function assignRemainingRooms() {
-  let rooms = [];
+  let rooms = ["hotshot", "balance", "smoothie", "memory", "deadEnd"];
+
+  let randomValue;
+
+  function reRoll(randomValue) {
+    randomValue = Math.floor(Math.random() * rooms.length);
+  }
+
+  gameGrid.forEach((row) => {
+    for (const column of row) {
+      console.log(column.assignedRoom);
+    }
+  });
 }
 
 buildMap(); //TESTING;
