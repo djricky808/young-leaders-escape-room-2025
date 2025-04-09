@@ -1,5 +1,5 @@
 let roomsTraveled = 0;
-
+const gameGrid = [];
 const rows = 5;
 const columns = 5;
 const squares = rows * columns;
@@ -145,7 +145,19 @@ startTimer(); //TESTING
 
 function buildMap() {
   buildGrid(rows, columns);
+  console.log(gameGrid);
 }
+
+function buildGrid(rows, columns) {
+  for (let i = 0; i < rows; i++) {
+    gameGrid.push([]);
+    for (let j = 0; j < columns; j++) {
+      gameGrid[i].push([]);
+    }
+  }
+}
+
+buildMap(); //TESTING;
 
 function startNewGame() {
   resetTimer();
