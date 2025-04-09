@@ -1,5 +1,9 @@
-const spots = 20;
-const roomsTraveled = 0;
+let roomsTraveled = 0;
+
+const rows = 5;
+const columns = 5;
+const squares = rows * columns;
+const spots = squares - 5;
 
 const rooms = {
   hotshot: {
@@ -60,7 +64,7 @@ const teams = {
     spaces: spots / 5,
   },
   smirthies: {
-    teamName: "smirthies",
+    teamName: "Smirthies",
     spaces: spots / 5,
   },
   oneForAll: {
@@ -86,7 +90,7 @@ const selectDirectionScreen = document.getElementById("direction");
 const roomScreen = document.getElementById("room");
 
 //Timer Functions
-let timer = 10000; //1800000;
+let timer = 1800000;
 let timeElapsed = 0;
 let timerRunning = false;
 let intervalID = null;
@@ -137,7 +141,7 @@ function updateTime() {
     <h1 style=${textColor}>${formattedMinutes}:${formattedSeconds}</h1>`;
 }
 
-startTimer();
+startTimer(); //TESTING
 
 function startNewGame() {
   resetTimer();
@@ -172,7 +176,7 @@ function goToRoomSelection() {
   selectDirectionScreen.classList.remove("hidden");
 }
 
-enterRoom(rooms.memory, teams.oneForAll.teamName);
+enterRoom(rooms.memory, teams.oneForAll.teamName); //TESTING
 
 //Button Event Listeners
 function addCompletedButtonEventListener() {
@@ -190,3 +194,7 @@ function addRetryButtonEventListener() {
     startNewGame();
   });
 }
+
+upButton.addEventListener("click", () => {
+  enterRoom(rooms.smoothie, teams.smirthies.teamName); //TESTING
+});
