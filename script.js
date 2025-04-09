@@ -167,12 +167,8 @@ startTimer(); //TESTING
 function buildMap() {
   buildGrid(rows, columns);
   assignStartRoom();
+  assignFinishRoom();
   console.log(gameGrid);
-  console.log(
-    "Current Location",
-    currentRowOnGameGrid,
-    currentColumnOnGameGrid
-  );
 }
 
 function buildGrid(rows, columns) {
@@ -187,10 +183,27 @@ function buildGrid(rows, columns) {
 function assignStartRoom() {
   let pickRow = Math.floor(Math.random() * rows);
   let pickColumn = Math.floor(Math.random() * columns);
-  console.log("Coordinates", pickRow, pickColumn);
+  console.log("Start Coordinates", pickRow, pickColumn);
   gameGrid[pickRow][pickColumn].assignedRoom = "START";
   currentRowOnGameGrid = pickRow;
   currentColumnOnGameGrid = pickColumn;
+}
+
+function assignFinishRoom() {
+  let pickRow =
+    currentRowOnGameGrid >= rows / 2
+      ? Math.floor(Math.random() * (rows / 2))
+      : Math.floor(Math.random() * (rows / 2) + rows / 2);
+  let pickColumn =
+    currentColumnOnGameGrid >= columns / 2
+      ? Math.floor(Math.random() * (columns / 2))
+      : Math.floor(Math.random() * (columns / 2) + columns / 2);
+  console.log("Finish coordinates", pickRow, pickColumn);
+  gameGrid[pickRow][pickColumn].assignedRoom = "FINISH";
+}
+
+function assignRemainingRooms() {
+  let rooms = [];
 }
 
 buildMap(); //TESTING;
