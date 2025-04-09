@@ -1,13 +1,15 @@
 let roomsTraveled = 0;
+let currentRowOnGameGrid = 0;
+let currentColumnOnGameGrid = 0;
 const gameGrid = [];
 const rows = 5;
 const columns = 5;
 const squares = rows * columns;
 const spots = squares - 5;
 
-class AssignedRoom {
+class CreateRoom {
   constructor() {
-    this.room = null;
+    this.assignedRoom = null;
     this.assignedTeam = null;
     this.hasRoomBeenEntered = false;
   }
@@ -164,19 +166,32 @@ startTimer(); //TESTING
 
 function buildMap() {
   buildGrid(rows, columns);
+  assignStartRoom();
   console.log(gameGrid);
+  console.log(
+    "Current Location",
+    currentRowOnGameGrid,
+    currentColumnOnGameGrid
+  );
 }
 
 function buildGrid(rows, columns) {
   for (let i = 0; i < rows; i++) {
     gameGrid.push([]);
     for (let j = 0; j < columns; j++) {
-      gameGrid[i].push(new AssignedRoom());
+      gameGrid[i].push(new CreateRoom());
     }
   }
 }
 
-function assignRooms() {}
+function assignStartRoom() {
+  let pickRow = Math.floor(Math.random() * rows);
+  let pickColumn = Math.floor(Math.random() * columns);
+  console.log("Coordinates", pickRow, pickColumn);
+  gameGrid[pickRow][pickColumn].assignedRoom = "START";
+  currentRowOnGameGrid = pickRow;
+  currentColumnOnGameGrid = pickColumn;
+}
 
 buildMap(); //TESTING;
 
