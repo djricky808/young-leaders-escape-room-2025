@@ -8,10 +8,12 @@ const squares = rows * columns;
 const spots = squares - 5;
 
 class CreateRoom {
-  constructor() {
+  constructor(i, j) {
     this.assignedRoom = null;
     this.assignedTeam = null;
     this.hasRoomBeenEntered = false;
+    this.x = j;
+    this.y = i;
   }
 }
 
@@ -21,34 +23,34 @@ const rooms = {
     roomName: "Hotshot Room",
     rules:
       "Chosen players need to knock down a row of bottles from across the room.",
-    count: spots / 5,
+    count: Math.ceil(spots / 4),
   },
   balance: {
     color: "yellow",
     roomName: "Balance Room",
     rules:
       "Chosen players must balance 3 balls on a plate while walking in a straight line.",
-    count: spots / 5,
+    count: Math.ceil(spots / 4),
   },
   smoothie: {
     color: "blue",
     roomName: "Smoothie Room",
     rules:
       "Chosen players will drink an unconventionally flavored smoothie, what could it be…?",
-    count: spots / 5,
+    count: Math.ceil(spots / 4),
   },
   memory: {
     color: "green",
     roomName: "Energy Room",
     rules: "Players will match Pokemon Energy Cards, Memory style",
-    count: spots / 5,
+    count: Math.ceil(spots / 4),
   },
   deadEnd: {
     color: "black",
     roomName: "DEAD END!",
     rules:
       "Oh no! You reached a dead end, go back to where you came. <br> CAUTION! If you enter this exact room again, the game will be over!",
-    count: spots / 5,
+    count: Math.ceil(spots / 10),
   },
   reEnteredDeadEnd: {
     color: "black",
@@ -176,7 +178,7 @@ function buildGrid(rows, columns) {
   for (let i = 0; i < rows; i++) {
     gameGrid.push([]);
     for (let j = 0; j < columns; j++) {
-      gameGrid[i].push(new CreateRoom());
+      gameGrid[i].push(new CreateRoom(i, j));
     }
   }
 }
@@ -204,20 +206,34 @@ function assignFinishRoom() {
 }
 
 function assignRemainingRooms() {
-  let rooms = ["hotshot", "balance", "smoothie", "memory", "deadEnd"];
+  let tasks = ["hotshot", "balance", "smoothie", "memory", "deadEnd"];
 
-  let randomValue;
+  let randomValue = 0;
 
-  function reRoll(randomValue) {
-    randomValue = Math.floor(Math.random() * rooms.length);
+  function reRollRoomAssignment() {
+    randomValue = Math.floor(Math.random() * tasks.length);
+    //console.log("Random Value", randomValue);
+    let selectedTask = tasks[randomValue];
+    //console.log(selectedTask);
+    //console.log(rooms[selectedTask].count);
+    if (rooms[selectedTask].count >= 0) {
+      rooms.selectedTask--;
+      return tasks[randomValue];
+    } else {
+      return reRollRoomAssignment();
+    }
+  }
+
+  function pickTaskToAssignRoom(room) {
+    let chosenTask = reRollRoomAssignment();
+    console.log(chosenTask);
+    room.assignedRoom = chosenTask;
   }
 
   gameGrid.forEach((row) => {
     for (const room of row) {
       if (!room.assignedRoom) {
-        console.log("Room is vacant");
-      } else {
-        console.log(room.assignedRoom);
+        pickTaskToAssignRoom(room);
       }
     }
   });
