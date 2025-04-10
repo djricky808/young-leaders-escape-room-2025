@@ -12,8 +12,6 @@ class CreateRoom {
     this.assignedRoom = null;
     this.assignedTeam = null;
     this.hasRoomBeenEntered = false;
-    this.x = j;
-    this.y = i;
   }
 }
 
@@ -184,14 +182,18 @@ function buildGrid(rows, columns) {
   for (let i = 0; i < rows; i++) {
     gameGrid.push([]);
     for (let j = 0; j < columns; j++) {
-      gameGrid[i].push(new CreateRoom(i, j));
+      gameGrid[i].push(new CreateRoom());
     }
   }
 }
 
 function assignStartRoom() {
-  let pickRow = Math.floor(Math.random() * rows);
-  let pickColumn = Math.floor(Math.random() * columns);
+  let notTheMiddleRows = [0, 1, rows - 2, rows - 1];
+  let pickRow =
+    notTheMiddleRows[Math.floor(Math.random() * notTheMiddleRows.length)];
+  let notTheMiddleColumns = [0, 1, columns - 2, columns - 1];
+  let pickColumn =
+    notTheMiddleColumns[Math.floor(Math.random() * notTheMiddleColumns.length)];
   console.log("Start Coordinates", pickRow, pickColumn);
   gameGrid[pickRow][pickColumn].assignedRoom = "START";
   currentRowOnGameGrid = pickRow;
@@ -291,7 +293,7 @@ function enterRoom(room, group) {
   roomScreen.innerHTML = `
     <h1 style=${textColor}>${roomName}</h1>
     <p style=${textColor}>${rules}</p>
-    <h1 style=${textColor}>${group}</h1>
+    ${group && `<h1 style=${textColor}>${group}</h1>`};
     ${
       roomName !== "GAME OVER!"
         ? `<button id="completed">Task Complete</button>`
