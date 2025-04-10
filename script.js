@@ -50,7 +50,7 @@ const rooms = {
     roomName: "DEAD END!",
     rules:
       "Oh no! You reached a dead end, go back to where you came. <br> CAUTION! If you enter this exact room again, the game will be over!",
-    count: Math.ceil(spots / 10),
+    count: Math.ceil(spots / 8),
   },
   reEnteredDeadEnd: {
     color: "black",
@@ -79,22 +79,27 @@ const rooms = {
 
 const teams = {
   confidential: {
+    id: "confidential",
     teamName: "It's Confidential",
     spaces: spots / 5,
   },
   fryBreads: {
+    id: "fryBreads",
     teamName: "FryBreads",
     spaces: spots / 5,
   },
   smirthies: {
+    id: "smirthies",
     teamName: "Smirthies",
     spaces: spots / 5,
   },
   oneForAll: {
+    id: "oneForAll",
     teamName: "One for All <br> (1 Person from Each Team)",
     spaces: spots / 5,
   },
   allForOne: {
+    id: "allForOne",
     teamName: "All for One <br> (Everybody is Playing)",
     spaces: spots / 5,
   },
@@ -171,6 +176,7 @@ function buildMap() {
   assignStartRoom();
   assignFinishRoom();
   assignRemainingRooms();
+  assignTeamToRooms();
   console.log(gameGrid);
 }
 
@@ -206,7 +212,7 @@ function assignFinishRoom() {
 }
 
 function assignRemainingRooms() {
-  let tasks = ["hotshot", "balance", "smoothie", "memory", "deadEnd"];
+  const tasks = ["hotshot", "balance", "smoothie", "memory", "deadEnd"];
 
   let randomValue = 0;
 
@@ -216,8 +222,8 @@ function assignRemainingRooms() {
     let selectedTask = tasks[randomValue];
     //console.log(selectedTask);
     //console.log(rooms[selectedTask].count);
-    if (rooms[selectedTask].count >= 0) {
-      rooms.selectedTask--;
+    if (rooms[selectedTask].count > 0) {
+      rooms[selectedTask].count--;
       return tasks[randomValue];
     } else {
       return reRollRoomAssignment();
@@ -234,6 +240,35 @@ function assignRemainingRooms() {
     for (const room of row) {
       if (!room.assignedRoom) {
         pickTaskToAssignRoom(room);
+      }
+    }
+  });
+}
+
+function assignTeamToRooms() {
+  const teamsPool = Object.keys(teams);
+  const roomsToAssignTeamsTo = ["hotshot", "balance", "smoothie", "memory"];
+
+  function reRollTeamAssignment() {
+    randomValue = Math.floor(Math.random() * teamsPool.length);
+    let selectedTeam = teamsPool[randomValue];
+    if (teams[selectedTeam].spaces > 0) {
+      teams[selectedTeam].count--;
+      return teams[selectedTeam].id;
+    } else {
+      return reRollTeamAssignment();
+    }
+  }
+
+  function pickTeamToAssignToRoom(room) {
+    let chosenTeam = reRollTeamAssignment();
+    room.assignedTeam = chosenTeam;
+  }
+
+  gameGrid.forEach((row) => {
+    for (const room of row) {
+      if (roomsToAssignTeamsTo.includes(room.assignedRoom)) {
+        pickTeamToAssignToRoom(room);
       }
     }
   });
