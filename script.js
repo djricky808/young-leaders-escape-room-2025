@@ -1,6 +1,7 @@
 let roomsTraveled = 0;
 let currentRowOnGameGrid = 0;
 let currentColumnOnGameGrid = 0;
+let timeLimit = 30;
 const gameGrid = [];
 const rows = 5;
 const columns = 5;
@@ -12,6 +13,8 @@ class CreateRoom {
     this.assignedRoom = null;
     this.assignedTeam = null;
     this.hasRoomBeenEntered = false;
+    this.row = i;
+    this.column = j;
   }
 }
 
@@ -48,7 +51,7 @@ const rooms = {
     roomName: "DEAD END!",
     rules:
       "Oh no! You reached a dead end, go back to where you came. <br> CAUTION! If you enter this exact room again, the game will be over!",
-    count: Math.ceil(spots / 8),
+    count: Math.ceil(spots / Math.floor(Math.sqrt(squares))),
   },
   reEnteredDeadEnd: {
     color: "black",
@@ -70,8 +73,8 @@ const rooms = {
   start: {
     color: "Gray",
     roomName: "Starting Room",
-    rules:
-      "Welcome to the Escape Room <br> Choose the direction that you want to go <br> Complete the task indicated by the assigned group <br> Try to find the exit room before the timer runs out.",
+    rules: `Welcome to the Escape Room <br> Choose the direction that you want to go <br> Complete the task indicated by the assigned group <br> Try to find the exit room before the timer runs out.
+      <br>You have ${timeLimit} minutes.`,
   },
 };
 
@@ -159,6 +162,7 @@ function resetTimer() {
 function updateTime() {
   let totalSeconds = Math.floor(timer / 1000);
   let minutes = Math.floor(totalSeconds / 60);
+  timeLimit = minutes;
   let seconds = totalSeconds % 60;
   let formattedMinutes = String(minutes).padStart(2, "0");
   let formattedSeconds = String(seconds).padStart(2, "0");
@@ -167,12 +171,13 @@ function updateTime() {
     <h1 style=${textColor}>${formattedMinutes}:${formattedSeconds}</h1>`;
 }
 
-startTimer(); //TESTING
+//startTimer(); //TESTING
 
 function buildMap() {
   buildGrid(rows, columns);
   assignStartRoom();
   assignFinishRoom();
+  assignDeadEndRooms();
   assignRemainingRooms();
   assignTeamToRooms();
   console.log(gameGrid);
@@ -182,7 +187,7 @@ function buildGrid(rows, columns) {
   for (let i = 0; i < rows; i++) {
     gameGrid.push([]);
     for (let j = 0; j < columns; j++) {
-      gameGrid[i].push(new CreateRoom());
+      gameGrid[i].push(new CreateRoom(i, j));
     }
   }
 }
@@ -195,7 +200,7 @@ function assignStartRoom() {
   let pickColumn =
     notTheMiddleColumns[Math.floor(Math.random() * notTheMiddleColumns.length)];
   console.log("Start Coordinates", pickRow, pickColumn);
-  gameGrid[pickRow][pickColumn].assignedRoom = "START";
+  gameGrid[pickRow][pickColumn].assignedRoom = "start";
   currentRowOnGameGrid = pickRow;
   currentColumnOnGameGrid = pickColumn;
 }
@@ -210,11 +215,31 @@ function assignFinishRoom() {
       ? Math.floor(Math.random() * (columns / 2))
       : Math.floor(Math.random() * (columns / 2) + columns / 2);
   console.log("Finish coordinates", pickRow, pickColumn);
-  gameGrid[pickRow][pickColumn].assignedRoom = "FINISH";
+  gameGrid[pickRow][pickColumn].assignedRoom = "finish";
+}
+
+function assignDeadEndRooms() {
+  let chosenRow = 0;
+  let chosenColumn = 0;
+
+  function reRoll() {
+    chosenRow = Math.floor(Math.random() * rows);
+    chosenColumn = Math.floor(Math.random() * columns);
+  }
+  while (rooms.deadEnd.count >= 0) {
+    if (!gameGrid[chosenRow][chosenColumn].assignedRoom) {
+      gameGrid[chosenRow][chosenColumn].assignedRoom = "deadEnd";
+      rooms.deadEnd.count--;
+      reRoll();
+    } else {
+      console.log("cannot find match");
+      reRoll();
+    }
+  }
 }
 
 function assignRemainingRooms() {
-  const tasks = ["hotshot", "balance", "smoothie", "memory", "deadEnd"];
+  const tasks = ["hotshot", "balance", "smoothie", "memory"];
 
   let randomValue = 0;
 
@@ -276,27 +301,37 @@ function assignTeamToRooms() {
   });
 }
 
-buildMap(); //TESTING;
+//buildMap(); //TESTING;
 
 function startNewGame() {
+  buildMap();
   resetTimer();
-  startTimer();
+  updateTime();
   introductionScreen.classList.add("hidden");
-  goToRoomSelection();
+  enterRoom(gameGrid[currentRowOnGameGrid][currentColumnOnGameGrid]);
+  const beginButton = document.getElementById("begin");
+  beginButton.addEventListener("click", () => startTimer());
 }
 
-function enterRoom(room, group) {
-  console.log("Entering room", room);
-  let { color, roomName, rules } = room;
+newGameBtn.addEventListener("click", () => startNewGame());
+
+function enterRoom(selectedRoom) {
+  console.log(selectedRoom);
+  let { assignedRoom, assignedTeam } = selectedRoom;
+  let { color, roomName, rules } = rooms[assignedRoom];
   let textColor = color === "yellow" ? "color:black" : "color:white";
   roomScreen.style.backgroundColor = color;
   roomScreen.innerHTML = `
     <h1 style=${textColor}>${roomName}</h1>
     <p style=${textColor}>${rules}</p>
-    ${group && `<h1 style=${textColor}>${group}</h1>`};
+    ${
+      assignedTeam !== null ? `<h1 style=${textColor}>${assignedTeam}</h1>` : ""
+    };
     ${
       roomName !== "GAME OVER!"
-        ? `<button id="completed">Task Complete</button>`
+        ? roomName === "Starting Room"
+          ? `<button id="begin">Begin</button>`
+          : `<button id="completed">Task Complete</button>`
         : `<button id="retry">New Game</button>`
     }`;
   selectDirectionScreen.classList.add("hidden");
@@ -311,7 +346,7 @@ function goToRoomSelection() {
   selectDirectionScreen.classList.remove("hidden");
 }
 
-enterRoom(rooms.memory, teams.oneForAll.teamName); //TESTING
+//enterRoom(rooms.memory, teams.oneForAll.teamName); //TESTING
 
 //Button Event Listeners
 function addCompletedButtonEventListener() {
@@ -329,5 +364,5 @@ function addRetryButtonEventListener() {
 }
 
 upButton.addEventListener("click", () => {
-  enterRoom(rooms.smoothie, teams.smirthies.teamName); //TESTING
+  enterRoom(gameGrid[0][0]); //TESTING
 });
