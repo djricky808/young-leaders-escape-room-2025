@@ -112,11 +112,13 @@ const upButton = document.getElementById("up");
 const downButton = document.getElementById("down");
 const leftButton = document.getElementById("left");
 const rightButton = document.getElementById("right");
+const beginButton = document.getElementById("begin");
 
 //Room Screens-Selectors
 const introductionScreen = document.getElementById("intro");
 const selectDirectionScreen = document.getElementById("direction");
 const roomScreen = document.getElementById("room");
+const rulesScreen = document.getElementById("rules");
 
 //Timer Functions
 let timer = 1800000;
@@ -308,12 +310,15 @@ function startNewGame() {
   resetTimer();
   updateTime();
   introductionScreen.classList.add("hidden");
-  enterRoom(gameGrid[currentRowOnGameGrid][currentColumnOnGameGrid]);
-  const beginButton = document.getElementById("begin");
-  beginButton.addEventListener("click", () => startTimer());
+  rulesScreen.classList.remove("hidden");
 }
 
 newGameBtn.addEventListener("click", () => startNewGame());
+beginButton.addEventListener("click", () => {
+  rulesScreen.classList.add("hidden");
+  selectDirectionScreen.classList.remove("hidden");
+  startTimer();
+});
 
 function enterRoom(selectedRoom) {
   console.log(selectedRoom);
@@ -340,6 +345,8 @@ function enterRoom(selectedRoom) {
     ? addCompletedButtonEventListener()
     : addRetryButtonEventListener();
 }
+
+function disableOrEnableDirectionButton() {}
 
 function goToRoomSelection() {
   roomScreen.classList.add("hidden");

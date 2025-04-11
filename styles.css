@@ -39,12 +39,17 @@ p {
   background-color: black;
 }
 
+#rules {
+  background-color: white;
+}
+
 #intro h1 {
   color: white;
 }
 
 #room h1,
-#room p {
+#room p,
+#rules p {
   text-align: center;
 }
 
