@@ -73,8 +73,7 @@ const rooms = {
   start: {
     color: "Gray",
     roomName: "Starting Room",
-    rules: `Welcome to the Escape Room <br> Choose the direction that you want to go <br> Complete the task indicated by the assigned group <br> Try to find the exit room before the timer runs out.
-      <br>You have ${timeLimit} minutes.`,
+    rules: `Are you lost? You're back where you started!`,
   },
 };
 
