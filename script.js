@@ -322,9 +322,10 @@ beginButton.addEventListener("click", () => {
 });
 
 function enterRoom(selectedRoom) {
+  console.log(selectedRoom);
   let { assignedRoom, assignedTeam, hasRoomBeenEntered } = selectedRoom;
   let { color, roomName, rules } = rooms[assignedRoom];
-  rooms[selectedRoom].hasRoomBeenEntered = true;
+  selectedRoom.hasRoomBeenEntered = true;
   console.log(selectedRoom);
   let textColor =
     (color === "yellow") | (color === "red") ? "color:black" : "color:white";
@@ -437,8 +438,7 @@ function setCoordinatesToEnterRoom(direction) {
   getAssignedRoom(gameGrid[currentRowOnGameGrid][currentColumnOnGameGrid]);
 }
 
-function getAssignedRoom() {
-  let assignedRoom = gameGrid[currentColumnOnGameGrid][currentColumnOnGameGrid];
+function getAssignedRoom(assignedRoom) {
   if (assignedRoom.assignedRoom === "deadEnd") {
     if (assignedRoom.hasRoomBeenEntered === true) {
       gameOver("reEnteredDeadEnd");
