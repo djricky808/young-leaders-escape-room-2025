@@ -53,6 +53,11 @@ p {
   text-align: center;
 }
 
+#room h1,
+#room p {
+  color: white;
+}
+
 #direction {
   background-color: gray;
   position: relative;

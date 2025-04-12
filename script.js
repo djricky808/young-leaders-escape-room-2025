@@ -1,6 +1,8 @@
 let roomsTraveled = 0;
 let currentRowOnGameGrid = 0;
 let currentColumnOnGameGrid = 0;
+let previousRowOnGameGrid = 0;
+let previousColumnOnGameGrid = 0;
 let timeLimit = 30;
 const gameGrid = [];
 const rows = 5;
@@ -20,10 +22,9 @@ class CreateRoom {
 
 const rooms = {
   hotshot: {
-    color: "red",
+    color: "#BE3D2A",
     roomName: "Hotshot Room",
-    rules:
-      "Chosen players need to knock down a row of bottles from across the room.",
+    rules: "Chosen players need to land a plunger dart on the given target",
     count: Math.ceil(spots / 4),
   },
   balance: {
@@ -33,11 +34,11 @@ const rooms = {
       "Chosen players must balance 3 balls on a plate while walking in a straight line.",
     count: Math.ceil(spots / 4),
   },
-  smoothie: {
+  domino: {
     color: "blue",
-    roomName: "Smoothie Room",
+    roomName: "Domino Room",
     rules:
-      "Chosen players will drink an unconventionally flavored smoothie, what could it be…?",
+      "Chosen players must set up 50 dominoes on the table. These dominos must all be knocked down in one run.",
     count: Math.ceil(spots / 4),
   },
   memory: {
@@ -73,7 +74,7 @@ const rooms = {
   start: {
     color: "Gray",
     roomName: "Starting Room",
-    rules: `Are you lost? You're back where you started!`,
+    rules: `Are you lost? You're back to where you started!<br>Or maybe you got sent back here after a dead end, oh very well!`,
   },
 };
 
@@ -143,7 +144,7 @@ function startTimer() {
     stopWatch();
     if (timer <= 0) {
       stopTimer();
-      enterRoom(rooms.outOfTime, "Try Again");
+      gameOver("outOfTime");
     }
     updateTime();
   }, 1000);
@@ -240,7 +241,7 @@ function assignDeadEndRooms() {
 }
 
 function assignRemainingRooms() {
-  const tasks = ["hotshot", "balance", "smoothie", "memory"];
+  const tasks = ["hotshot", "balance", "domino", "memory"];
 
   let randomValue = 0;
 
@@ -275,7 +276,7 @@ function assignRemainingRooms() {
 
 function assignTeamToRooms() {
   const teamsPool = Object.keys(teams);
-  const roomsToAssignTeamsTo = ["hotshot", "balance", "smoothie", "memory"];
+  const roomsToAssignTeamsTo = ["hotshot", "balance", "domino", "memory"];
 
   function reRollTeamAssignment() {
     randomValue = Math.floor(Math.random() * teamsPool.length);
@@ -316,38 +317,64 @@ newGameBtn.addEventListener("click", () => startNewGame());
 beginButton.addEventListener("click", () => {
   rulesScreen.classList.add("hidden");
   selectDirectionScreen.classList.remove("hidden");
+  disableOrEnableDirectionButtons();
   startTimer();
 });
 
 function enterRoom(selectedRoom) {
-  console.log(selectedRoom);
-  let { assignedRoom, assignedTeam } = selectedRoom;
+  let { assignedRoom, assignedTeam, hasRoomBeenEntered } = selectedRoom;
   let { color, roomName, rules } = rooms[assignedRoom];
-  let textColor = color === "yellow" ? "color:black" : "color:white";
+  rooms[selectedRoom].hasRoomBeenEntered = true;
+  console.log(selectedRoom);
+  let textColor =
+    (color === "yellow") | (color === "red") ? "color:black" : "color:white";
   roomScreen.style.backgroundColor = color;
   roomScreen.innerHTML = `
     <h1 style=${textColor}>${roomName}</h1>
     <p style=${textColor}>${rules}</p>
-    ${
-      assignedTeam !== null ? `<h1 style=${textColor}>${assignedTeam}</h1>` : ""
-    };
-    ${
-      roomName !== "GAME OVER!"
-        ? roomName === "Starting Room"
-          ? `<button id="begin">Begin</button>`
-          : `<button id="completed">Task Complete</button>`
-        : `<button id="retry">New Game</button>`
+    <h1 style=${textColor}>${teams[assignedTeam].teamName}</h1>
+    <button id="completed">Task Complete</button>`;
+  selectDirectionScreen.classList.add("hidden");
+  roomScreen.classList.remove("hidden");
+  addCompletedButtonEventListener();
+}
+
+function enterDeadEndRoom(selectedRoom) {
+  let { color, roomName, rules } = rooms[selectedRoom.assignedRoom];
+  selectedRoom.hasRoomBeenEntered = true;
+  roomScreen.style.backgroundColor = color;
+  roomScreen.innerHTML = `
+    <h1>${roomName}</h1>
+    <p>${rules}</p>
+  <button id="reverse">Continue</button>
     }`;
   selectDirectionScreen.classList.add("hidden");
   roomScreen.classList.remove("hidden");
-  roomName !== "GAME OVER!"
-    ? addCompletedButtonEventListener()
-    : addRetryButtonEventListener();
+  addReverseButtonEventListener();
 }
 
-function disableOrEnableDirectionButton() {}
+function gameOver(losingCondition) {
+  let { color, roomName, rules } = rooms[losingCondition];
+  roomScreen.style.backgroundColor = color;
+  roomScreen.innerHTML = `
+    <h1>${roomName}</h1>
+    <p>${rules}</p>
+  <button id="retry">Retry</button>
+    }`;
+  selectDirectionScreen.classList.add("hidden");
+  roomScreen.classList.remove("hidden");
+  addRetryButtonEventListener();
+}
+
+function disableOrEnableDirectionButtons() {
+  upButton.disabled = currentRowOnGameGrid === 0 ? true : false;
+  downButton.disabled = currentRowOnGameGrid === rows - 1 ? true : false;
+  leftButton.disabled = currentColumnOnGameGrid === 0 ? true : false;
+  rightButton.disabled = currentColumnOnGameGrid === columns - 1 ? true : false;
+}
 
 function goToRoomSelection() {
+  disableOrEnableDirectionButtons();
   roomScreen.classList.add("hidden");
   selectDirectionScreen.classList.remove("hidden");
 }
@@ -369,6 +396,62 @@ function addRetryButtonEventListener() {
   });
 }
 
+function addReverseButtonEventListener() {
+  const reverseButton = document.getElementById(reverse);
+  reverseButton.addEventListener("click", () => {
+    enterRoom(gameGrid[previousRowOnGameGrid][previousColumnOnGameGrid]);
+  });
+}
+
 upButton.addEventListener("click", () => {
-  enterRoom(gameGrid[0][0]); //TESTING
+  setCoordinatesToEnterRoom("up");
 });
+
+downButton.addEventListener("click", () => {
+  setCoordinatesToEnterRoom("down");
+});
+
+leftButton.addEventListener("click", () => {
+  setCoordinatesToEnterRoom("left");
+});
+
+rightButton.addEventListener("click", () => {
+  setCoordinatesToEnterRoom("right");
+});
+
+function setCoordinatesToEnterRoom(direction) {
+  if (direction === "up") {
+    previousRowOnGameGrid = currentRowOnGameGrid;
+    currentRowOnGameGrid--;
+  } else if (direction === "down") {
+    previousRowOnGameGrid = currentRowOnGameGrid;
+    currentRowOnGameGrid++;
+  } else if (direction === "left") {
+    previousColumnOnGameGrid = currentColumnOnGameGrid;
+    currentColumnOnGameGrid--;
+  } else if (direction === "right") {
+    previousColumnOnGameGrid = currentColumnOnGameGrid;
+    currentColumnOnGameGrid++;
+  }
+
+  getAssignedRoom(gameGrid[currentRowOnGameGrid][currentColumnOnGameGrid]);
+}
+
+function getAssignedRoom() {
+  let assignedRoom = gameGrid[currentColumnOnGameGrid][currentColumnOnGameGrid];
+  if (assignedRoom.assignedRoom === "deadEnd") {
+    if (assignedRoom.hasRoomBeenEntered === true) {
+      gameOver("reEnteredDeadEnd");
+    } else {
+      enterDeadEndRoom(assignedRoom);
+    }
+  } else if (assignedRoom === "finish") {
+    victory();
+  } else {
+    enterRoom(assignedRoom);
+  }
+}
+
+function gameOver() {}
+
+function victory() {}
