@@ -183,6 +183,7 @@ function buildMap() {
   assignRemainingRooms();
   assignTeamToRooms();
   console.log(gameGrid);
+  console.log("starting point", currentRowOnGameGrid, currentColumnOnGameGrid);
 }
 
 function buildGrid(rows, columns) {
@@ -322,18 +323,20 @@ beginButton.addEventListener("click", () => {
 });
 
 function enterRoom(selectedRoom) {
-  console.log(selectedRoom);
-  let { assignedRoom, assignedTeam, hasRoomBeenEntered } = selectedRoom;
+  let { assignedRoom, assignedTeam } = selectedRoom;
   let { color, roomName, rules } = rooms[assignedRoom];
   selectedRoom.hasRoomBeenEntered = true;
-  console.log(selectedRoom);
   let textColor =
     (color === "yellow") | (color === "red") ? "color:black" : "color:white";
   roomScreen.style.backgroundColor = color;
   roomScreen.innerHTML = `
     <h1 style=${textColor}>${roomName}</h1>
     <p style=${textColor}>${rules}</p>
-    <h1 style=${textColor}>${teams[assignedTeam].teamName}</h1>
+    ${
+      assignedTeam
+        ? `<h1 style=${textColor}>${teams[assignedTeam].teamName}</h1>`
+        : ""
+    }
     <button id="completed">Task Complete</button>`;
   selectDirectionScreen.classList.add("hidden");
   roomScreen.classList.remove("hidden");
@@ -341,6 +344,7 @@ function enterRoom(selectedRoom) {
 }
 
 function enterDeadEndRoom(selectedRoom) {
+  console.log(selectedRoom);
   let { color, roomName, rules } = rooms[selectedRoom.assignedRoom];
   selectedRoom.hasRoomBeenEntered = true;
   roomScreen.style.backgroundColor = color;
@@ -398,7 +402,7 @@ function addRetryButtonEventListener() {
 }
 
 function addReverseButtonEventListener() {
-  const reverseButton = document.getElementById(reverse);
+  const reverseButton = document.getElementById("reverse");
   reverseButton.addEventListener("click", () => {
     enterRoom(gameGrid[previousRowOnGameGrid][previousColumnOnGameGrid]);
   });
@@ -421,20 +425,29 @@ rightButton.addEventListener("click", () => {
 });
 
 function setCoordinatesToEnterRoom(direction) {
+  //Need to update coordinates as they enter the room.
+  previousRowOnGameGrid = currentRowOnGameGrid;
+  previousColumnOnGameGrid = currentColumnOnGameGrid;
   if (direction === "up") {
-    previousRowOnGameGrid = currentRowOnGameGrid;
     currentRowOnGameGrid--;
   } else if (direction === "down") {
-    previousRowOnGameGrid = currentRowOnGameGrid;
     currentRowOnGameGrid++;
   } else if (direction === "left") {
-    previousColumnOnGameGrid = currentColumnOnGameGrid;
     currentColumnOnGameGrid--;
   } else if (direction === "right") {
-    previousColumnOnGameGrid = currentColumnOnGameGrid;
     currentColumnOnGameGrid++;
   }
 
+  console.log(
+    "current coordinates",
+    currentRowOnGameGrid,
+    currentColumnOnGameGrid
+  );
+  console.log(
+    "previous coordinates",
+    previousRowOnGameGrid,
+    previousColumnOnGameGrid
+  );
   getAssignedRoom(gameGrid[currentRowOnGameGrid][currentColumnOnGameGrid]);
 }
 
