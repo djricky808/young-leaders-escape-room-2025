@@ -452,6 +452,4 @@ function getAssignedRoom() {
   }
 }
 
-function gameOver() {}
-
 function victory() {}
