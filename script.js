@@ -405,6 +405,18 @@ function addReverseButtonEventListener() {
   const reverseButton = document.getElementById("reverse");
   reverseButton.addEventListener("click", () => {
     enterRoom(gameGrid[previousRowOnGameGrid][previousColumnOnGameGrid]);
+    currentRowOnGameGrid = previousRowOnGameGrid;
+    currentColumnOnGameGrid = previousColumnOnGameGrid;
+    console.log(
+      "returning back to",
+      previousRowOnGameGrid,
+      previousColumnOnGameGrid
+    );
+    console.log(
+      "current coordinates should now be",
+      currentRowOnGameGrid,
+      currentColumnOnGameGrid
+    );
   });
 }
 
