@@ -120,6 +120,17 @@ const selectDirectionScreen = document.getElementById("direction");
 const roomScreen = document.getElementById("room");
 const rulesScreen = document.getElementById("rules");
 
+function resetCounts() {
+  let roomNames = ["hotshot", "balance", "domino", "memory"];
+  roomNames.forEach((name) => {
+    rooms[name].count = Math.ceil(spots / 4);
+  });
+  rooms["deadEnd"].count = Math.ceil(spots / Math.floor(Math.sqrt(squares)));
+  for (const team in teams) {
+    team.spaces = spots / 5;
+  }
+}
+
 //Timer Functions
 let timer = 1800000;
 let timeElapsed = 0;
@@ -307,6 +318,8 @@ function assignTeamToRooms() {
 //buildMap(); //TESTING;
 
 function startNewGame() {
+  resetCounts();
+  gameGrid.length = 0;
   buildMap();
   resetTimer();
   updateTime();
