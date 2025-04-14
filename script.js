@@ -6,8 +6,8 @@ let previousColumnOnGameGrid = 0;
 let timeLimit = 30; //To be change to a variable related on time later.
 let isGameMapDrawn = false;
 const gameGrid = [];
-const rows = 5;
-const columns = 5;
+const rows = 7;
+const columns = 7;
 const squares = rows * columns;
 const spots = squares - 5;
 
@@ -140,6 +140,11 @@ function resetCounts() {
   for (const team in teams) {
     team.spaces = spots / 5;
   }
+}
+
+function resetScreens() {
+  const screens = [roomScreen, victoryScreen, mapWindow];
+  screens.forEach((screen) => screen.classList.add("hidden"));
 }
 
 //Timer Functions
@@ -330,6 +335,7 @@ function assignTeamToRooms() {
 
 function startNewGame() {
   resetCounts();
+  resetScreens();
   gameGrid.length = 0;
   visualGameGrid.innerHTML = "";
   isGameMapDrawn = false;
