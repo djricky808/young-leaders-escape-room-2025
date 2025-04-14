@@ -43,7 +43,7 @@ const rooms = {
       "Chosen players must set up 50 dominoes on the table. These dominos must all be knocked down in one run.",
     count: Math.ceil(spots / 4),
   },
-  memory: {
+  energy: {
     color: "green",
     roomName: "Energy Room",
     rules: "Players will match Pokemon Energy Cards, Memory style",
@@ -132,7 +132,7 @@ const visualGameGrid = document.getElementById("game-grid");
 
 function resetCounts() {
   roomsTraveled = 0;
-  let roomNames = ["ball", "balance", "domino", "memory"];
+  let roomNames = ["ball", "balance", "domino", "energy"];
   roomNames.forEach((name) => {
     rooms[name].count = Math.ceil(spots / 4);
   });
@@ -264,7 +264,7 @@ function assignDeadEndRooms() {
 }
 
 function assignRemainingRooms() {
-  const tasks = ["ball", "balance", "domino", "memory"];
+  const tasks = ["ball", "balance", "domino", "energy"];
 
   let randomValue = 0;
 
@@ -299,7 +299,7 @@ function assignRemainingRooms() {
 
 function assignTeamToRooms() {
   const teamsPool = Object.keys(teams);
-  const roomsToAssignTeamsTo = ["ball", "balance", "domino", "memory"];
+  const roomsToAssignTeamsTo = ["ball", "balance", "domino", "energy"];
 
   function reRollTeamAssignment() {
     randomValue = Math.floor(Math.random() * teamsPool.length);
@@ -417,7 +417,7 @@ function goToRoomSelection() {
   selectDirectionScreen.classList.remove("hidden");
 }
 
-//enterRoom(rooms.memory, teams.oneForAll.teamName); //TESTING
+//enterRoom(rooms.energy, teams.oneForAll.teamName); //TESTING
 
 //Button Event Listeners
 function addCompletedButtonEventListener() {
