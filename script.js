@@ -4,6 +4,7 @@ let currentColumnOnGameGrid = 0;
 let previousRowOnGameGrid = 0;
 let previousColumnOnGameGrid = 0;
 let timeLimit = 30; //To be change to a variable related on time later.
+let isGameMapDrawn = false;
 const gameGrid = [];
 const rows = 5;
 const columns = 5;
@@ -25,7 +26,7 @@ const rooms = {
     color: "#BE3D2A",
     roomName: "Ball Room",
     rules:
-      "Chosen players will have to navigate around cones with a ball back to back from each other. If the ball drops they need to start over.",
+      "Chosen players will have to navigate around cones with a ball back to back from each other.<br> If the ball drops they need to start over.",
     count: Math.ceil(spots / 4),
   },
   balance: {
@@ -52,7 +53,7 @@ const rooms = {
     color: "black",
     roomName: "DEAD END!",
     rules:
-      "Oh no! You reached a dead end, go back to where you came. <br> CAUTION! If you enter this exact room again, the game will be over!",
+      "Oh no! You reached a dead end, go back to the previous room and complete the task again. <br> CAUTION! If you enter this exact room again, the game will be over!",
     count: Math.ceil(spots / Math.floor(Math.sqrt(squares))),
   },
   reEnteredDeadEnd: {
@@ -68,16 +69,23 @@ const rooms = {
       "Oh no! You ran out of time! I am afraid that this is the end of the road for you!",
   },
   start: {
-    color: "Gray",
+    color: "gray",
     roomName: "Starting Room",
     rules: `Are you lost? You're back to where you started!<br>Or maybe you got sent back here after a dead end, oh very well!`,
+  },
+  finish: {
+    color: "white",
+    roomName: "Finish Room",
+  },
+  current: {
+    color: "purple",
   },
 };
 
 const teams = {
-  confidential: {
-    id: "confidential",
-    teamName: "It's Confidential",
+  classified: {
+    id: "classified",
+    teamName: "Classified",
     spaces: spots / 5,
   },
   fryBreads: {
@@ -93,12 +101,12 @@ const teams = {
   oneForAll: {
     id: "oneForAll",
     teamName: "One for All <br> (1 Person from Each Team)",
-    spaces: spots / 5,
+    spaces: spots / 10,
   },
   allForOne: {
     id: "allForOne",
     teamName: "All for One <br> (Everybody is Playing)",
-    spaces: spots / 5,
+    spaces: spots / 10,
   },
 };
 
@@ -109,6 +117,7 @@ const downButton = document.getElementById("down");
 const leftButton = document.getElementById("left");
 const rightButton = document.getElementById("right");
 const beginButton = document.getElementById("begin");
+const closeButton = document.getElementById("close");
 
 //Room Screens-Selectors
 const introductionScreen = document.getElementById("intro");
@@ -116,8 +125,10 @@ const selectDirectionScreen = document.getElementById("direction");
 const roomScreen = document.getElementById("room");
 const rulesScreen = document.getElementById("rules");
 const victoryScreen = document.getElementById("victory-screen");
+const mapWindow = document.getElementById("map-screen");
 
 const victoryMessage = document.getElementById("victory-message");
+const visualGameGrid = document.getElementById("game-grid");
 
 function resetCounts() {
   roomsTraveled = 0;
@@ -376,16 +387,19 @@ function enterDeadEndRoom(selectedRoom) {
 }
 
 function gameOver(losingCondition) {
+  stopTimer();
   let { color, roomName, rules } = rooms[losingCondition];
   roomScreen.style.backgroundColor = color;
   roomScreen.innerHTML = `
     <h1>${roomName}</h1>
     <p>${rules}</p>
+    <button id ='view-map'>View Map</button>
   <button id="retry">Retry</button>
     }`;
   selectDirectionScreen.classList.add("hidden");
   roomScreen.classList.remove("hidden");
   addRetryButtonEventListener();
+  addShowMapButtonEventListener();
 }
 
 function disableOrEnableDirectionButtons() {
@@ -441,6 +455,8 @@ function addShowMapButtonEventListener() {
   const showMapButton = document.getElementById("view-map");
   showMapButton.addEventListener("click", () => {
     console.log("Need to build map");
+    if (!isGameMapDrawn) drawGameGrid();
+    mapWindow.classList.remove("hidden");
   });
 }
 
@@ -458,6 +474,10 @@ leftButton.addEventListener("click", () => {
 
 rightButton.addEventListener("click", () => {
   setCoordinatesToEnterRoom("right");
+});
+
+closeButton.addEventListener("click", () => {
+  mapWindow.classList.add("hidden");
 });
 
 function setCoordinatesToEnterRoom(direction) {
@@ -516,4 +536,25 @@ function victory() {
   addShowMapButtonEventListener();
   selectDirectionScreen.classList.add("hidden");
   victoryScreen.classList.remove("hidden");
+}
+
+function drawGameGrid() {
+  gameGrid[currentRowOnGameGrid][currentColumnOnGameGrid].assignedRoom =
+    "current";
+  gameGrid.forEach((row, i) => {
+    visualGameGrid.innerHTML += `<tr id='map-row-${i}'></tr>`;
+    const drawRow = document.getElementById(`map-row-${i}`);
+    for (const column of row) {
+      let { assignedRoom, hasRoomBeenEntered } = column;
+      let { color } = rooms[column.assignedRoom];
+      drawRow.innerHTML += `
+      <td class="${color === "#BE3D2A" ? "red" : color}-${
+        hasRoomBeenEntered === true ? "entered" : "skipped"
+      }">${
+        assignedRoom === "current"
+          ? "YOU<br>ARE<br>HERE!"
+          : assignedRoom.toUpperCase()
+      }</td>`;
+    }
+  });
 }

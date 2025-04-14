@@ -14,7 +14,8 @@ h1 {
 }
 
 p {
-  font-size: 24px;
+  font-size: 36px;
+  margin: 0 10%;
 }
 
 .slide-container {
@@ -119,6 +120,38 @@ p {
   transform: translate(-50%, -50%);
 }
 
+#map-screen {
+  position: absolute;
+  background-color: white;
+  width: 90%;
+  height: 90%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#game-grid {
+  margin: 0 auto;
+  height: 80%;
+}
+
+#game-grid tr {
+  height: 120px;
+}
+
+#game-grid td {
+  text-align: center;
+  padding: 20px;
+  height: 20px;
+  width: 20px;
+  border: 5px solid black;
+}
+#map-screen button {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+}
+
 button {
   width: 20%;
   padding: 20px;
@@ -136,4 +169,50 @@ button:hover {
 button:disabled {
   background-color: darkslategrey;
   cursor: not-allowed;
+}
+
+.red-entered {
+  background-color: #be3d2a;
+}
+.red-skipped {
+  background-color: #53403d;
+  color: #352927;
+}
+.green-entered {
+  background-color: green;
+  color: white;
+}
+.green-skipped {
+  background-color: #3d533d;
+  color: #2c3a2c;
+}
+.blue-entered {
+  background-color: blue;
+  color: white;
+}
+.blue-skipped {
+  background-color: #2c3a56;
+  color: #1e283b;
+}
+.yellow-entered {
+  background-color: yellow;
+}
+.yellow-skipped {
+  background-color: #5e5e3e;
+  color: #46462e;
+}
+.black-entered {
+  background-color: black;
+  color: white;
+}
+.black-skipped {
+  background-color: #7b7b7b;
+  color: #343434;
+}
+.white-skipped {
+  background-color: #ffffff;
+}
+.purple-entered {
+  background-color: purple;
+  color: white;
 }
