@@ -3,7 +3,7 @@ let currentRowOnGameGrid = 0;
 let currentColumnOnGameGrid = 0;
 let previousRowOnGameGrid = 0;
 let previousColumnOnGameGrid = 0;
-let timeLimit = 30;
+let timeLimit = 30; //To be change to a variable related on time later.
 const gameGrid = [];
 const rows = 5;
 const columns = 5;
@@ -21,10 +21,11 @@ class CreateRoom {
 }
 
 const rooms = {
-  hotshot: {
+  ball: {
     color: "#BE3D2A",
-    roomName: "Hotshot Room",
-    rules: "Chosen players need to land a plunger dart on the given target",
+    roomName: "Ball Room",
+    rules:
+      "Chosen players will have to navigate around cones with a ball back to back from each other. If the ball drops they need to start over.",
     count: Math.ceil(spots / 4),
   },
   balance: {
@@ -65,11 +66,6 @@ const rooms = {
     roomName: "GAME OVER!",
     rules:
       "Oh no! You ran out of time! I am afraid that this is the end of the road for you!",
-  },
-  finish: {
-    color: "White",
-    roomName: "CONGRATULATIONS",
-    rules: "You escaped with a time of...",
   },
   start: {
     color: "Gray",
@@ -119,9 +115,13 @@ const introductionScreen = document.getElementById("intro");
 const selectDirectionScreen = document.getElementById("direction");
 const roomScreen = document.getElementById("room");
 const rulesScreen = document.getElementById("rules");
+const victoryScreen = document.getElementById("victory-screen");
+
+const victoryMessage = document.getElementById("victory-message");
 
 function resetCounts() {
-  let roomNames = ["hotshot", "balance", "domino", "memory"];
+  roomsTraveled = 0;
+  let roomNames = ["ball", "balance", "domino", "memory"];
   roomNames.forEach((name) => {
     rooms[name].count = Math.ceil(spots / 4);
   });
@@ -253,7 +253,7 @@ function assignDeadEndRooms() {
 }
 
 function assignRemainingRooms() {
-  const tasks = ["hotshot", "balance", "domino", "memory"];
+  const tasks = ["ball", "balance", "domino", "memory"];
 
   let randomValue = 0;
 
@@ -288,7 +288,7 @@ function assignRemainingRooms() {
 
 function assignTeamToRooms() {
   const teamsPool = Object.keys(teams);
-  const roomsToAssignTeamsTo = ["hotshot", "balance", "domino", "memory"];
+  const roomsToAssignTeamsTo = ["ball", "balance", "domino", "memory"];
 
   function reRollTeamAssignment() {
     randomValue = Math.floor(Math.random() * teamsPool.length);
@@ -350,7 +350,11 @@ function enterRoom(selectedRoom) {
         ? `<h1 style=${textColor}>${teams[assignedTeam].teamName}</h1>`
         : ""
     }
-    <button id="completed">Task Complete</button>`;
+    ${
+      roomName === "start"
+        ? `<button id="completed">Task Complete</button>`
+        : `<button id="completed">Continue</button>`
+    }`;
   selectDirectionScreen.classList.add("hidden");
   roomScreen.classList.remove("hidden");
   addCompletedButtonEventListener();
@@ -433,6 +437,13 @@ function addReverseButtonEventListener() {
   });
 }
 
+function addShowMapButtonEventListener() {
+  const showMapButton = document.getElementById("view-map");
+  showMapButton.addEventListener("click", () => {
+    console.log("Need to build map");
+  });
+}
+
 upButton.addEventListener("click", () => {
   setCoordinatesToEnterRoom("up");
 });
@@ -477,17 +488,32 @@ function setCoordinatesToEnterRoom(direction) {
 }
 
 function getAssignedRoom(assignedRoom) {
+  if (assignedRoom.hasRoomBeenEntered === false) {
+    roomsTraveled += 1;
+  }
   if (assignedRoom.assignedRoom === "deadEnd") {
     if (assignedRoom.hasRoomBeenEntered === true) {
       gameOver("reEnteredDeadEnd");
     } else {
       enterDeadEndRoom(assignedRoom);
     }
-  } else if (assignedRoom === "finish") {
+  } else if (assignedRoom.assignedRoom === "finish") {
     victory();
   } else {
     enterRoom(assignedRoom);
   }
 }
 
-function victory() {}
+function victory() {
+  stopTimer();
+  let minutes = Math.floor(timeElapsed / 1000 / 60);
+  let seconds = Math.floor((timeElapsed / 1000) % 60);
+  victoryMessage.innerHTML = `
+  You completed with a time of ${minutes} minutes and ${seconds} seconds! <br>
+  You traveled through ${roomsTraveled} rooms! <br>
+  Way to go team!`;
+  addRetryButtonEventListener();
+  addShowMapButtonEventListener();
+  selectDirectionScreen.classList.add("hidden");
+  victoryScreen.classList.remove("hidden");
+}

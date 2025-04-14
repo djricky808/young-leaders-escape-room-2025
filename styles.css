@@ -39,7 +39,8 @@ p {
   background-color: black;
 }
 
-#rules {
+#rules,
+#victory-screen {
   background-color: white;
 }
 
@@ -49,7 +50,8 @@ p {
 
 #room h1,
 #room p,
-#rules p {
+#rules p,
+#victory-screen h2 {
   text-align: center;
 }
 
