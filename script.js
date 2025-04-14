@@ -331,6 +331,8 @@ function assignTeamToRooms() {
 function startNewGame() {
   resetCounts();
   gameGrid.length = 0;
+  visualGameGrid.innerHTML = "";
+  isGameMapDrawn = false;
   buildMap();
   resetTimer();
   updateTime();
@@ -557,4 +559,5 @@ function drawGameGrid() {
       }</td>`;
     }
   });
+  isGameMapDrawn = true;
 }
