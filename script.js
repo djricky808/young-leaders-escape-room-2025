@@ -119,6 +119,69 @@ const rightButton = document.getElementById("right");
 const beginButton = document.getElementById("begin");
 const closeButton = document.getElementById("close");
 
+//Button Event Listeners
+function addCompletedButtonEventListener() {
+  const completedButton = document.getElementById("completed");
+  completedButton.addEventListener("click", () => {
+    goToRoomSelection();
+  });
+}
+
+function addRetryButtonEventListener() {
+  const retryButton = document.getElementById("retry");
+  retryButton.addEventListener("click", () => {
+    startNewGame();
+  });
+}
+
+function addReverseButtonEventListener() {
+  const reverseButton = document.getElementById("reverse");
+  reverseButton.addEventListener("click", () => {
+    enterRoom(gameGrid[previousRowOnGameGrid][previousColumnOnGameGrid]);
+    currentRowOnGameGrid = previousRowOnGameGrid;
+    currentColumnOnGameGrid = previousColumnOnGameGrid;
+    console.log(
+      "returning back to",
+      previousRowOnGameGrid,
+      previousColumnOnGameGrid
+    );
+    console.log(
+      "current coordinates should now be",
+      currentRowOnGameGrid,
+      currentColumnOnGameGrid
+    );
+  });
+}
+
+function addShowMapButtonEventListener() {
+  const showMapButton = document.getElementById("view-map");
+  showMapButton.addEventListener("click", () => {
+    console.log("Need to build map");
+    if (!isGameMapDrawn) drawGameGrid();
+    mapWindow.classList.remove("hidden");
+  });
+}
+
+upButton.addEventListener("click", () => {
+  setCoordinatesToEnterRoom("up");
+});
+
+downButton.addEventListener("click", () => {
+  setCoordinatesToEnterRoom("down");
+});
+
+leftButton.addEventListener("click", () => {
+  setCoordinatesToEnterRoom("left");
+});
+
+rightButton.addEventListener("click", () => {
+  setCoordinatesToEnterRoom("right");
+});
+
+closeButton.addEventListener("click", () => {
+  mapWindow.classList.add("hidden");
+});
+
 //Room Screens-Selectors
 const introductionScreen = document.getElementById("intro");
 const selectDirectionScreen = document.getElementById("direction");
@@ -127,8 +190,31 @@ const rulesScreen = document.getElementById("rules");
 const victoryScreen = document.getElementById("victory-screen");
 const mapWindow = document.getElementById("map-screen");
 
+//Inner hard-coded message selectors
 const victoryMessage = document.getElementById("victory-message");
 const visualGameGrid = document.getElementById("game-grid");
+
+//New Game Functions
+function startNewGame() {
+  resetCounts();
+  resetScreens();
+  gameGrid.length = 0;
+  visualGameGrid.innerHTML = "";
+  isGameMapDrawn = false;
+  buildMap();
+  resetTimer();
+  updateTime();
+  introductionScreen.classList.add("hidden");
+  rulesScreen.classList.remove("hidden");
+}
+
+newGameBtn.addEventListener("click", () => startNewGame());
+beginButton.addEventListener("click", () => {
+  rulesScreen.classList.add("hidden");
+  selectDirectionScreen.classList.remove("hidden");
+  disableOrEnableDirectionButtons();
+  startTimer();
+});
 
 function resetCounts() {
   roomsTraveled = 0;
@@ -200,7 +286,7 @@ function updateTime() {
     <h1 style=${textColor}>${formattedMinutes}:${formattedSeconds}</h1>`;
 }
 
-//startTimer(); //TESTING
+//Functions for buiding the Game Map
 
 function buildMap() {
   buildGrid(rows, columns);
@@ -331,28 +417,7 @@ function assignTeamToRooms() {
   });
 }
 
-//buildMap(); //TESTING;
-
-function startNewGame() {
-  resetCounts();
-  resetScreens();
-  gameGrid.length = 0;
-  visualGameGrid.innerHTML = "";
-  isGameMapDrawn = false;
-  buildMap();
-  resetTimer();
-  updateTime();
-  introductionScreen.classList.add("hidden");
-  rulesScreen.classList.remove("hidden");
-}
-
-newGameBtn.addEventListener("click", () => startNewGame());
-beginButton.addEventListener("click", () => {
-  rulesScreen.classList.add("hidden");
-  selectDirectionScreen.classList.remove("hidden");
-  disableOrEnableDirectionButtons();
-  startTimer();
-});
+//Room Handling Functions
 
 function enterRoom(selectedRoom) {
   let { assignedRoom, assignedTeam } = selectedRoom;
@@ -423,71 +488,6 @@ function goToRoomSelection() {
   selectDirectionScreen.classList.remove("hidden");
 }
 
-//enterRoom(rooms.energy, teams.oneForAll.teamName); //TESTING
-
-//Button Event Listeners
-function addCompletedButtonEventListener() {
-  const completedButton = document.getElementById("completed");
-  completedButton.addEventListener("click", () => {
-    goToRoomSelection();
-  });
-}
-
-function addRetryButtonEventListener() {
-  const retryButton = document.getElementById("retry");
-  retryButton.addEventListener("click", () => {
-    startNewGame();
-  });
-}
-
-function addReverseButtonEventListener() {
-  const reverseButton = document.getElementById("reverse");
-  reverseButton.addEventListener("click", () => {
-    enterRoom(gameGrid[previousRowOnGameGrid][previousColumnOnGameGrid]);
-    currentRowOnGameGrid = previousRowOnGameGrid;
-    currentColumnOnGameGrid = previousColumnOnGameGrid;
-    console.log(
-      "returning back to",
-      previousRowOnGameGrid,
-      previousColumnOnGameGrid
-    );
-    console.log(
-      "current coordinates should now be",
-      currentRowOnGameGrid,
-      currentColumnOnGameGrid
-    );
-  });
-}
-
-function addShowMapButtonEventListener() {
-  const showMapButton = document.getElementById("view-map");
-  showMapButton.addEventListener("click", () => {
-    console.log("Need to build map");
-    if (!isGameMapDrawn) drawGameGrid();
-    mapWindow.classList.remove("hidden");
-  });
-}
-
-upButton.addEventListener("click", () => {
-  setCoordinatesToEnterRoom("up");
-});
-
-downButton.addEventListener("click", () => {
-  setCoordinatesToEnterRoom("down");
-});
-
-leftButton.addEventListener("click", () => {
-  setCoordinatesToEnterRoom("left");
-});
-
-rightButton.addEventListener("click", () => {
-  setCoordinatesToEnterRoom("right");
-});
-
-closeButton.addEventListener("click", () => {
-  mapWindow.classList.add("hidden");
-});
-
 function setCoordinatesToEnterRoom(direction) {
   //Need to update coordinates as they enter the room.
   previousRowOnGameGrid = currentRowOnGameGrid;
@@ -501,17 +501,6 @@ function setCoordinatesToEnterRoom(direction) {
   } else if (direction === "right") {
     currentColumnOnGameGrid++;
   }
-
-  console.log(
-    "current coordinates",
-    currentRowOnGameGrid,
-    currentColumnOnGameGrid
-  );
-  console.log(
-    "previous coordinates",
-    previousRowOnGameGrid,
-    previousColumnOnGameGrid
-  );
   getAssignedRoom(gameGrid[currentRowOnGameGrid][currentColumnOnGameGrid]);
 }
 
