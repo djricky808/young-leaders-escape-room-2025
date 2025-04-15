@@ -140,23 +140,12 @@ function addReverseButtonEventListener() {
     enterRoom(gameGrid[previousRowOnGameGrid][previousColumnOnGameGrid]);
     currentRowOnGameGrid = previousRowOnGameGrid;
     currentColumnOnGameGrid = previousColumnOnGameGrid;
-    console.log(
-      "returning back to",
-      previousRowOnGameGrid,
-      previousColumnOnGameGrid
-    );
-    console.log(
-      "current coordinates should now be",
-      currentRowOnGameGrid,
-      currentColumnOnGameGrid
-    );
   });
 }
 
 function addShowMapButtonEventListener() {
   const showMapButton = document.getElementById("view-map");
   showMapButton.addEventListener("click", () => {
-    console.log("Need to build map");
     if (!isGameMapDrawn) drawGameGrid();
     mapWindow.classList.remove("hidden");
   });
@@ -295,8 +284,6 @@ function buildMap() {
   assignDeadEndRooms();
   assignRemainingRooms();
   assignTeamToRooms();
-  console.log(gameGrid);
-  console.log("starting point", currentRowOnGameGrid, currentColumnOnGameGrid);
 }
 
 function buildGrid(rows, columns) {
@@ -315,7 +302,6 @@ function assignStartRoom() {
   let notTheMiddleColumns = [0, 1, columns - 2, columns - 1];
   let pickColumn =
     notTheMiddleColumns[Math.floor(Math.random() * notTheMiddleColumns.length)];
-  console.log("Start Coordinates", pickRow, pickColumn);
   gameGrid[pickRow][pickColumn].assignedRoom = "start";
   currentRowOnGameGrid = pickRow;
   currentColumnOnGameGrid = pickColumn;
@@ -330,7 +316,6 @@ function assignFinishRoom() {
     currentColumnOnGameGrid >= columns / 2
       ? Math.floor(Math.random() * (columns / 2))
       : Math.floor(Math.random() * (columns / 2) + columns / 2);
-  console.log("Finish coordinates", pickRow, pickColumn);
   gameGrid[pickRow][pickColumn].assignedRoom = "finish";
 }
 
@@ -348,7 +333,6 @@ function assignDeadEndRooms() {
       rooms.deadEnd.count--;
       reRoll();
     } else {
-      console.log("cannot find match");
       reRoll();
     }
   }
@@ -361,10 +345,7 @@ function assignRemainingRooms() {
 
   function reRollRoomAssignment() {
     randomValue = Math.floor(Math.random() * tasks.length);
-    //console.log("Random Value", randomValue);
     let selectedTask = tasks[randomValue];
-    //console.log(selectedTask);
-    //console.log(rooms[selectedTask].count);
     if (rooms[selectedTask].count > 0) {
       rooms[selectedTask].count--;
       return tasks[randomValue];
@@ -375,7 +356,6 @@ function assignRemainingRooms() {
 
   function pickTaskToAssignRoom(room) {
     let chosenTask = reRollRoomAssignment();
-    console.log(chosenTask);
     room.assignedRoom = chosenTask;
   }
 
@@ -445,7 +425,6 @@ function enterRoom(selectedRoom) {
 }
 
 function enterDeadEndRoom(selectedRoom) {
-  console.log(selectedRoom);
   let { color, roomName, rules } = rooms[selectedRoom.assignedRoom];
   selectedRoom.hasRoomBeenEntered = true;
   roomScreen.style.backgroundColor = color;
