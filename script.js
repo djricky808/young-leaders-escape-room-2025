@@ -3,6 +3,7 @@ let currentRowOnGameGrid = 0;
 let currentColumnOnGameGrid = 0;
 let previousRowOnGameGrid = 0;
 let previousColumnOnGameGrid = 0;
+const initialTime = 20;
 let timeLimit = 30; //To be change to a variable related on time later.
 let isGameMapDrawn = false;
 let doWeWantDeadEndRooms = false; //HARD MODE
@@ -55,7 +56,7 @@ const rooms = {
     roomName: "DEAD END!",
     rules:
       "Oh no! You reached a dead end, go back to the previous room and complete the task again. <br> CAUTION! If you enter this exact room again, the game will be over!",
-    count: Math.ceil(spots / Math.floor(Math.sqrt(squares))),
+    count: Math.ceil(spots / Math.floor(Math.sqrt(squares)) / 2),
   },
   reEnteredDeadEnd: {
     color: "black",
@@ -259,7 +260,7 @@ function stopTimer() {
 }
 
 function resetTimer() {
-  timer = 1800000;
+  timer = initialTime * 60 * 1000;
   timeElapsed = 0;
   updateTime();
 }
