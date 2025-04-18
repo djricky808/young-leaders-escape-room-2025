@@ -5,9 +5,10 @@ let previousRowOnGameGrid = 0;
 let previousColumnOnGameGrid = 0;
 let timeLimit = 30; //To be change to a variable related on time later.
 let isGameMapDrawn = false;
+let doWeWantDeadEndRooms = false; //HARD MODE
 const gameGrid = [];
-const rows = 7;
-const columns = 7;
+const rows = 5;
+const columns = 5;
 const squares = rows * columns;
 const spots = squares - 5;
 
@@ -281,7 +282,9 @@ function buildMap() {
   buildGrid(rows, columns);
   assignStartRoom();
   assignFinishRoom();
-  assignDeadEndRooms();
+  if (doWeWantDeadEndRooms) {
+    assignDeadEndRooms();
+  }
   assignRemainingRooms();
   assignTeamToRooms();
 }
@@ -344,14 +347,21 @@ function assignRemainingRooms() {
   let randomValue = 0;
 
   function reRollRoomAssignment() {
-    randomValue = Math.floor(Math.random() * tasks.length);
-    let selectedTask = tasks[randomValue];
-    if (rooms[selectedTask].count > 0) {
-      rooms[selectedTask].count--;
-      return tasks[randomValue];
-    } else {
-      return reRollRoomAssignment();
+    let selectedTask;
+    console.log(tasks);
+    function reRoll() {
+      randomValue = Math.floor(Math.random() * tasks.length);
+      console.log(randomValue);
+      selectedTask = tasks[randomValue];
+      console.log(selectedTask);
     }
+    reRoll();
+    console.log(rooms[selectedTask]);
+    if (rooms[selectedTask].count <= 0) {
+      reRoll();
+    }
+    rooms[selectedTask].count--;
+    return tasks[randomValue];
   }
 
   function pickTaskToAssignRoom(room) {
