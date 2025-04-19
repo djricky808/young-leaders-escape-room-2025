@@ -3,13 +3,13 @@ let currentRowOnGameGrid = 0;
 let currentColumnOnGameGrid = 0;
 let previousRowOnGameGrid = 0;
 let previousColumnOnGameGrid = 0;
-const initialTime = 20;
-let timeLimit = 30; //To be change to a variable related on time later.
+const initialTime = 10;
+let timeLimit = 10; //To be change to a variable related on time later.
 let isGameMapDrawn = false;
-let doWeWantDeadEndRooms = false; //HARD MODE
+let doWeWantDeadEndRooms = true; //HARD MODE
 const gameGrid = [];
-const rows = 5;
-const columns = 5;
+const rows = 7;
+const columns = 7;
 const squares = rows * columns;
 const spots = squares - 5;
 
@@ -31,11 +31,10 @@ const rooms = {
       "Chosen players will have to navigate around cones with a ball back to back from each other.<br> If the ball drops they need to start over.",
     count: Math.ceil(spots / 4),
   },
-  balance: {
+  dice: {
     color: "yellow",
-    roomName: "Balance Room",
-    rules:
-      "Chosen players must balance 3 balls on a plate while walking in a straight line.",
+    roomName: "Dice Room",
+    rules: "Roll 2 dice, 7 or doubles to win",
     count: Math.ceil(spots / 4),
   },
   domino: {
@@ -209,7 +208,7 @@ beginButton.addEventListener("click", () => {
 
 function resetCounts() {
   roomsTraveled = 0;
-  let roomNames = ["ball", "balance", "domino", "energy"];
+  let roomNames = ["ball", "dice", "domino", "energy"];
   roomNames.forEach((name) => {
     rooms[name].count = Math.ceil(spots / 4);
   });
@@ -343,7 +342,7 @@ function assignDeadEndRooms() {
 }
 
 function assignRemainingRooms() {
-  const tasks = ["ball", "balance", "domino", "energy"];
+  const tasks = ["ball", "dice", "domino", "energy"];
 
   let randomValue = 0;
 
@@ -381,7 +380,7 @@ function assignRemainingRooms() {
 
 function assignTeamToRooms() {
   const teamsPool = Object.keys(teams);
-  const roomsToAssignTeamsTo = ["ball", "balance", "domino", "energy"];
+  const roomsToAssignTeamsTo = ["ball", "dice", "domino", "energy"];
 
   function reRollTeamAssignment() {
     randomValue = Math.floor(Math.random() * teamsPool.length);
